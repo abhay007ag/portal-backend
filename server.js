@@ -12,7 +12,17 @@ app.use(cors());
 app.use(express.json());
 
 // Connect to MongoDB
-connectDB();
+app.use(async (req, res, next) => {
+  try {
+    await connectDB();
+    next();
+  } catch (err) {
+    console.error("Database connection error:", err.message);
+    res.status(500).json({
+      message: "Database connection failed."
+    });
+  }
+});
 
 app.get("/api/health", (req, res) => {
     res.json({
